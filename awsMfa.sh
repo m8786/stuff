@@ -38,9 +38,6 @@ fi
 BASE_PROFILE_NAME=$1
 MFA_PROFILE_NAME=$1-MFA
 
-# Generate Security Token Flag
-GENERATE_ST="true"
-
 # Check to see if we already have a STS delivered temporary profile
 # Expiration Time: Each SessionToken will have an expiration time which by default is 12 hours and
 # can range between 15 minutes and 36 hours
