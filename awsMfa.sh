@@ -86,7 +86,8 @@ MFA_SERIAL="arn:aws:iam::${MFA_ACCT_ID}:mfa/${MFA_USER_ID}"
 printf "Checking '${BASE_PROFILE_NAME}' configuration...\n"
 PROFILE_REGION=$(aws configure --profile "$BASE_PROFILE_NAME" get region)
 if [ $? -ne 0 ]; then
-    printf "Region setting not found for '$BASE_PROFILE_NAME', aborting.\n"
+    print_help
+    printf "\n\nERROR: Region setting not found for '$BASE_PROFILE_NAME', aborting.\n"
     exit
 fi
 printf "'${BASE_PROFILE_NAME}' region is set to: ${PROFILE_REGION}\n"
