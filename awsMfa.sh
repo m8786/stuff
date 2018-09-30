@@ -114,5 +114,5 @@ else
         printf "'${MFA_PROFILE_NAME}' default output set to: ${PROFILE_OUTPUT}\n"
     fi
     printf "Credentials and config file updated with details for '${MFA_PROFILE_NAME}'.  Use it by calling:\n\n"
-    printf "aws --profile ${MFA_PROFILE_NAME}\nOr alias it and use it in place 'aws':\nalias mfaws=\"aws --profile ${MFA_PROFILE_NAME}\"\n\n"
+    printf "aws --profile ${MFA_PROFILE_NAME}\nOr alias it and use it in place of 'aws':\nalias mfaws=\"aws --profile ${MFA_PROFILE_NAME}\"\n\n"
 fi
