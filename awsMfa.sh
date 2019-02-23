@@ -121,5 +121,5 @@ else
     printf "You can also set the environment variables by using the following commands:\n"
     printf "        export AWS_ACCESS_KEY_ID=$(aws --profile ${MFA_PROFILE_NAME} configure get aws_access_key_id)\n"
     printf "        export AWS_SECRET_ACCESS_KEY=$(aws --profile ${MFA_PROFILE_NAME} configure get aws_secret_access_key)\n"
-	printf "        export AWS_SESSION_TOKEN=$(aws --profile ${MFA_PROFILE_NAME} configure get aws_session_token)\n\n"
+    printf "        export AWS_SESSION_TOKEN=$(aws --profile ${MFA_PROFILE_NAME} configure get aws_session_token)\n\n"
 fi
