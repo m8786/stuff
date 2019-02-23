@@ -96,7 +96,7 @@ if [ ! -z $PROFILE_OUTPUT ]; then
 fi
 
 read -p "Enter current token code for MFA Device ($MFA_SERIAL): " TOKEN_CODE
-printf "Attempting to generating new IAM STS Token ...\n"
+printf "Attempting to generating new IAM STS Token...\n"
 read -r AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN EXPIRATION AWS_ACCESS_KEY_ID < <(aws sts get-session-token --profile $BASE_PROFILE_NAME --output text --query 'Credentials.*' --serial-number $MFA_SERIAL --token-code $TOKEN_CODE)
 if [ $? -ne 0 ];then
     printf "\nAn error occured. AWS credentials file not updated, please check configuration and try again.\n"
@@ -114,6 +114,12 @@ else
         aws configure set output "$PROFILE_OUTPUT" --profile $MFA_PROFILE_NAME
         printf "'${MFA_PROFILE_NAME}' default output set to: ${PROFILE_OUTPUT}\n"
     fi
-    printf "Credentials and config file updated with details for '${MFA_PROFILE_NAME}'.  Use it by calling:\n\n"
-    printf "aws --profile ${MFA_PROFILE_NAME}\nOr alias it and use it in place of 'aws':\nalias mfaws=\"aws --profile ${MFA_PROFILE_NAME}\"\n\n"
+    printf "Credentials and config file updated with details for '${MFA_PROFILE_NAME}'.  Use it by calling:\n"
+    printf "        aws --profile ${MFA_PROFILE_NAME}\n"
+    printf "Or alias it and use it in place of 'aws':\n"
+    printf "        alias mfaws=\"aws --profile ${MFA_PROFILE_NAME}\"\n"
+    printf "You can also set the environment variables by using the following commands:\n"
+    printf "        export AWS_ACCESS_KEY_ID=$(aws --profile ${MFA_PROFILE_NAME} configure get aws_access_key_id)\n"
+    printf "        export AWS_SECRET_ACCESS_KEY=$(aws --profile ${MFA_PROFILE_NAME} configure get aws_secret_access_key)\n"
+	printf "        export AWS_SESSION_TOKEN=$(aws --profile ${MFA_PROFILE_NAME} configure get aws_session_token)\n\n"
 fi
