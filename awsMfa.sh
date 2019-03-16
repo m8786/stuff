@@ -118,8 +118,8 @@ else
     printf "        aws --profile ${MFA_PROFILE_NAME}\n"
     printf "Or alias it and use it in place of 'aws':\n"
     printf "        alias mfaws=\"aws --profile ${MFA_PROFILE_NAME}\"\n"
-    printf "You can also set the environment variables by using the following commands:\n"
-    printf "        export AWS_ACCESS_KEY_ID=$(aws --profile ${MFA_PROFILE_NAME} configure get aws_access_key_id)\n"
-    printf "        export AWS_SECRET_ACCESS_KEY=$(aws --profile ${MFA_PROFILE_NAME} configure get aws_secret_access_key)\n"
-    printf "        export AWS_SESSION_TOKEN=$(aws --profile ${MFA_PROFILE_NAME} configure get aws_session_token)\n\n"
+    printf "You can also set the environment variables by using the following commands (if you keep the leading space, it's not saved to bash history with default history settings):\n"
+    printf "        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID\n"
+    printf "        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY\n"
+    printf "        export AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN\n\n"
 fi
