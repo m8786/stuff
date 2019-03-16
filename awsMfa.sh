@@ -97,7 +97,7 @@ fi
 
 read -p "Enter current token code for MFA Device ($MFA_SERIAL): " TOKEN_CODE
 printf "Attempting to generating new IAM STS Token...\n"
-read -r AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN EXPIRATION AWS_ACCESS_KEY_ID < <(aws sts get-session-token --profile $BASE_PROFILE_NAME --output text --query 'Credentials.*' --serial-number $MFA_SERIAL --token-code $TOKEN_CODE)
+read -r AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN EXPIRATION AWS_ACCESS_KEY_ID < <(aws sts get-session-token --profile $BASE_PROFILE_NAME --output text --query 'Credentials.[SecretAccessKey, SessionToken, Expiration, AccessKeyId]' --serial-number $MFA_SERIAL --token-code $TOKEN_CODE)
 if [ $? -ne 0 ];then
     printf "\nAn error occured. AWS credentials file not updated, please check configuration and try again.\n"
 else
