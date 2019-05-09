@@ -60,20 +60,20 @@ BASE_PROFILE_EXISTS=`more ~/.aws/credentials | grep $BASE_PROFILE_NAME | wc -l`
 if [ $BASE_PROFILE_EXISTS -eq 0 ]; then
     print_help
     printf "\n\nERROR: Base profile '${BASE_PROFILE_NAME}' does not exist, exiting!\n"
-    exit
+    exit 1
 fi
 
 MFA_ACCT_ID=$(cat ~/.aws/credentials | grep "${BASE_PROFILE_NAME}-accountId" | cut -d'=' -f2 | tr -d '[:space:]')
 if [ -z $MFA_ACCT_ID ]; then
     print_help
     printf "\n\nERROR: No Account ID found for '$BASE_PROFILE_NAME', aborting.\n"
-    exit
+    exit 1
 fi
 MFA_USER_ID=$(cat ~/.aws/credentials | grep "${BASE_PROFILE_NAME}-userId" | cut -d'=' -f2 | tr -d '[:space:]')
 if [ -z $MFA_USER_ID ]; then
     print_help
     printf "\n\nERROR: No User ID found for '$BASE_PROFILE_NAME', aborting.\n"
-    exit
+    exit 1
 fi
 # MFA Serial: Specify MFA_SERIAL of IAM User
 # Example: arn:aws:iam::123456789123:mfa/iamusername
@@ -86,7 +86,7 @@ PROFILE_REGION=$(aws configure --profile "$BASE_PROFILE_NAME" get region)
 if [ $? -ne 0 ]; then
     print_help
     printf "\n\nERROR: Region setting not found for '$BASE_PROFILE_NAME', aborting.\n"
-    exit
+    exit 1
 fi
 printf "'${BASE_PROFILE_NAME}' region is set to: ${PROFILE_REGION}\n"
 # Grab profile output if it exists (optional)
@@ -100,26 +100,27 @@ printf "Attempting to generating new IAM STS Token...\n"
 read -r AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN EXPIRATION AWS_ACCESS_KEY_ID < <(aws sts get-session-token --profile $BASE_PROFILE_NAME --output text --query 'Credentials.[SecretAccessKey, SessionToken, Expiration, AccessKeyId]' --serial-number $MFA_SERIAL --token-code $TOKEN_CODE)
 if [ $? -ne 0 ];then
     printf "\nAn error occured. AWS credentials file not updated, please check configuration and try again.\n"
-else
-    printf "STS Session Token successfully generated, attempting to store profile...\n"
-    aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile $MFA_PROFILE_NAME
-    aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile $MFA_PROFILE_NAME
-    aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile $MFA_PROFILE_NAME
-    printf "Credentials stored in MFA profile '${MFA_PROFILE_NAME}'...\n"
-    aws configure set expiration "$EXPIRATION" --profile $MFA_PROFILE_NAME
-    printf "Expiration stored in '${MFA_PROFILE_NAME}' config...\n"
-    aws configure set region "$PROFILE_REGION" --profile $MFA_PROFILE_NAME
-    printf "'${MFA_PROFILE_NAME}' default region set to: ${PROFILE_REGION}\n"
-    if [ ! -z $PROFILE_OUTPUT ]; then
-        aws configure set output "$PROFILE_OUTPUT" --profile $MFA_PROFILE_NAME
-        printf "'${MFA_PROFILE_NAME}' default output set to: ${PROFILE_OUTPUT}\n"
-    fi
-    printf "Credentials and config file updated with details for '${MFA_PROFILE_NAME}'.  Use it by calling:\n"
-    printf "        aws --profile ${MFA_PROFILE_NAME}\n"
-    printf "Or alias it and use it in place of 'aws':\n"
-    printf "        alias mfaws=\"aws --profile ${MFA_PROFILE_NAME}\"\n"
-    printf "You can also set the environment variables by using the following commands (if you keep the leading space, it's not saved to bash history with default history settings):\n"
-    printf "        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID\n"
-    printf "        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY\n"
-    printf "        export AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN\n\n"
+    exit 1
 fi
+printf "STS Session Token successfully generated, attempting to store profile...\n"
+aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile $MFA_PROFILE_NAME
+aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile $MFA_PROFILE_NAME
+aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile $MFA_PROFILE_NAME
+printf "Credentials stored in MFA profile '${MFA_PROFILE_NAME}'...\n"
+aws configure set expiration "$EXPIRATION" --profile $MFA_PROFILE_NAME
+printf "Expiration stored in '${MFA_PROFILE_NAME}' config...\n"
+aws configure set region "$PROFILE_REGION" --profile $MFA_PROFILE_NAME
+printf "'${MFA_PROFILE_NAME}' default region set to: ${PROFILE_REGION}\n"
+if [ ! -z $PROFILE_OUTPUT ]; then
+    aws configure set output "$PROFILE_OUTPUT" --profile $MFA_PROFILE_NAME
+    printf "'${MFA_PROFILE_NAME}' default output set to: ${PROFILE_OUTPUT}\n"
+fi
+printf "Credentials and config file updated with details for '${MFA_PROFILE_NAME}'.  Use it by calling:\n"
+printf "        aws --profile ${MFA_PROFILE_NAME}\n"
+printf "Or alias it and use it in place of 'aws':\n"
+printf "        alias mfaws=\"aws --profile ${MFA_PROFILE_NAME}\"\n"
+printf "You can also set the environment variables by using the following commands (if you keep the leading space, it's not saved to bash history with default history settings):\n"
+printf "        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID\n"
+printf "        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY\n"
+printf "        export AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN\n\n"
+exit 0
