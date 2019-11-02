@@ -63,13 +63,13 @@ if [ $BASE_PROFILE_EXISTS -eq 0 ]; then
     exit 1
 fi
 
-MFA_ACCT_ID=$(cat ~/.aws/credentials | grep "${BASE_PROFILE_NAME}-accountId" | cut -d'=' -f2 | tr -d '[:space:]')
+MFA_ACCT_ID=$(cat ~/.aws/credentials | grep "^${BASE_PROFILE_NAME}-accountId" | cut -d'=' -f2 | tr -d '[:space:]')
 if [ -z $MFA_ACCT_ID ]; then
     print_help
     printf "\n\nERROR: No Account ID found for '$BASE_PROFILE_NAME', aborting.\n"
     exit 1
 fi
-MFA_USER_ID=$(cat ~/.aws/credentials | grep "${BASE_PROFILE_NAME}-userId" | cut -d'=' -f2 | tr -d '[:space:]')
+MFA_USER_ID=$(cat ~/.aws/credentials | grep "^${BASE_PROFILE_NAME}-userId" | cut -d'=' -f2 | tr -d '[:space:]')
 if [ -z $MFA_USER_ID ]; then
     print_help
     printf "\n\nERROR: No User ID found for '$BASE_PROFILE_NAME', aborting.\n"
